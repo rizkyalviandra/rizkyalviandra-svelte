@@ -1,0 +1,34 @@
+name: Auto commit
+on:
+  push:
+    branches:
+      - master
+  schedule:
+    - cron: "59 5,11,17,23 * * *"
+jobs:
+  auto_commit: 
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test the jobs
+        run: |
+          echo "Running Test Jobs"
+      - uses: actions/checkout@v2
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Modify LAST_UPDATED file
+        run: |
+          d=`date '+%Y-%m-%dT%H:%M:%SZ'`
+          echo $d > LAST_UPDATED
+      - name: Commit changes
+        run: |
+          git config --local user.email "rizkyalviandra@gmail.com"
+          git config --local user.name "rizkyalviandra"
+          git add -A
+          git commit -m "updated commit"
+      - name: Push Back
+        uses: ad-m/github-push-action@v0.5.0
+        with:
+          force: true
+          directory: "."
+          github_token: ${{ secrets.GITHUB_TOKEN }}

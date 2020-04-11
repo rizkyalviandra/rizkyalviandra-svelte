@@ -1,7 +1,19 @@
 <script>
-    export let workingData = {};
-    const {Heading, Working_list} = workingData;
+    import API_GITHUB from '../types/api'
+    import {onMount} from 'svelte'
+    import Carousel from '@beyonk/svelte-carousel'
+    import { ChevronLeftIcon, ChevronRightIcon } from 'svelte-feather-icons'
+
+    let data = []
+    let dataOwner = []
+
+    onMount(async () => {
+      const result = await fetch(API_GITHUB);
+      data = await result.json();
+      console.log(data)
+    })
 </script>
+
 <style>
 *,
 *::before,
@@ -119,26 +131,49 @@ img {
   margin-bottom: 1.25rem;    
   font-weight: 400;
 }
+
+.control :global(svg) {
+  width: 100%;
+  height: 100%;
+  color: #fff;
+  border: 2px solid #fff;
+  border-radius: 32px;
+}
 </style>
 
-<section id="work" class="section">
+<section id="project">
     <div class="main">
-      <h1>{Heading}</h1>
-  <ul class="cards section-body">
-    {#each Working_list as list}
-    <li class="cards_item">
-      <div class="card">
-        <div class="card_image"><img src={list.Image_url} alt={list.Company}></div>
-        <div class="card_content">
-          <h2 class="card_title">{list.Company}</h2>
-          <p class="card_text">{list.Level}</p>
-          <p class="card_text">{list.Position}</p>
-          <p class="card_text">{list.Longest}</p>
-          <!-- <button class="btn card_btn">Read More</button> -->
-        </div>
-      </div>
-    </li>
-    {/each}
-  </ul>
-</div>
+        <h1>Projects</h1>
+        <ul class="cards section-body">
+            <Carousel>
+            <span class="control" slot="left-control">
+              <ChevronLeftIcon />
+            </span>
+            {#each data as list}
+            <div class="slide-content">
+              <li class="cards_item">
+                  <div class="card">
+                      <div class="card_image">
+                        <img src={list.owner.avatar_url} alt={list.name}/>
+                      </div>
+                      <div class="card_content">
+                        <a href={list.html_url}>
+                          <h2 class="card_title">{list.name}</h2>
+                        </a>
+                        {#if list.language == null}
+                          <p class="card_text">any</p>
+                        {:else}
+                          <p class="card_text">{list.language}</p>
+                        {/if}
+                      </div>
+                  </div>
+              </li>
+            </div>
+            {/each}
+            <span class="control" slot="right-control">
+              <ChevronRightIcon />
+            </span>
+            </Carousel>
+        </ul>
+    </div>
 </section>
