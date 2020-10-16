@@ -3,3 +3,4 @@
 ## Todo
 - [ ] fix card project
 - [ ] add carousel on project
+- [ ] make responsive website
